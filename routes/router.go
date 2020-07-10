@@ -23,6 +23,36 @@ var webRoutes = WebRoutes{
 		"/",
 		handlers.Index,
 	},
+	{
+		"signup",
+		"GET",
+		"/signup",
+		handlers.Signup,
+	},
+	{
+		"signupAccount",
+		"POST",
+		"/signup_account",
+		handlers.SignupAccount,
+	},
+	{
+		"login",
+		"GET",
+		"/login",
+		handlers.Login,
+	},
+	{
+		"auth",
+		"POST",
+		"/authenticate",
+		handlers.Authenticate,
+	},
+	{
+		"logout",
+		"GET",
+		"/logout",
+		handlers.Logout,
+	},
 }
 
 /** 返回一个 mux.Router 类型指针，从而可以当作处理器使用 */
