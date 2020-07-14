@@ -42,3 +42,11 @@ func SessionDeleteAll() (err error) {
 	_, err = Db.Exec(statement)
 	return
 }
+
+/** 从会话中获取用户 */
+func (session *Session) User() (user User, err error) {
+	user = User{}
+	err = Db.QueryRow("SELECT id, uuid, name, email, created_at FROM users WHERE id = ?", session.UserId).
+		Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.CreatedAt)
+	return
+}

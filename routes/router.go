@@ -53,6 +53,30 @@ var webRoutes = WebRoutes{
 		"/logout",
 		handlers.Logout,
 	},
+	{
+		"newThread",
+		"GET",
+		"/thread/new",
+		handlers.NewThread,
+	},
+	{
+		"createThread",
+		"POST",
+		"/thread/create",
+		handlers.CreateThread,
+	},
+	{
+		"readThread",
+		"GET",
+		"/thread/read",
+		handlers.ReadThread,
+	},
+	{
+		"postThread",
+		"POST",
+		"/thread/post",
+		handlers.PostThread,
+	},
 }
 
 /** 返回一个 mux.Router 类型指针，从而可以当作处理器使用 */
