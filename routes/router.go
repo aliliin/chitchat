@@ -77,6 +77,12 @@ var webRoutes = WebRoutes{
 		"/thread/post",
 		handlers.PostThread,
 	},
+	{
+		"error",
+		"GET",
+		"/err",
+		handlers.Err,
+	},
 }
 
 /** 返回一个 mux.Router 类型指针，从而可以当作处理器使用 */

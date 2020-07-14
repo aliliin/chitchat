@@ -14,21 +14,21 @@ func PostThread(writer http.ResponseWriter, request *http.Request) {
 	} else {
 		err = request.ParseForm()
 		if err != nil {
-			fmt.Println("Cannot parse form")
+			danger("Cannot parse form")
 		}
 		user, err := sess.User()
 		if err != nil {
-			fmt.Println("Cannot get user from session")
+			danger("Cannot get user from session")
 		}
 		body := request.PostFormValue("body")
 		uuid := request.PostFormValue("uuid")
 		thread, err := models.ThreadByUUID(uuid)
 
 		if err != nil {
-			fmt.Println("cannot read thread")
+			error_message(writer, request, "cannot read thread")
 		}
 		if _, err := user.CreatePost(thread, body); err != nil {
-			fmt.Println("Cannot create post")
+			danger("Cannot create post")
 		}
 		url := fmt.Sprint("/thread/read?id=", uuid)
 		http.Redirect(writer, request, url, 302)

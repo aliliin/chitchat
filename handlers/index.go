@@ -18,3 +18,14 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 	}
 }
+
+/** 错误路由处理方法 */
+func Err(writer http.ResponseWriter, request *http.Request) {
+	vals := request.URL.Query()
+	_, err := session(writer, request)
+	if err != nil {
+		generateHTML(writer, vals.Get("msg"), "layout", "navbar", "error")
+	} else {
+		generateHTML(writer, vals.Get("msg"), "layout", "auth.navbar", "error")
+	}
+}

@@ -5,10 +5,46 @@ import (
 	"fmt"
 	"github.com/aliliin/chitchat/models"
 	"html/template"
+	"log"
 	"net/http"
+	"os"
+	"strings"
 )
 
 /** 全局辅助函数 */
+
+/** 初始化日志错误 */
+var logger *log.Logger
+
+func init() {
+	file, err := os.OpenFile("logs/chitchat.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalln("Failed to open log file", err)
+	}
+	logger = log.New(file, "INFO", log.Ldate|log.Ltime|log.Lshortfile)
+}
+
+/** 三种错误级别 */
+func info(args ...interface{}) {
+	logger.SetPrefix("INFO ")
+	logger.Println(args...)
+}
+
+func danger(args ...interface{}) {
+	logger.SetPrefix("ERROR ")
+	logger.Println(args...)
+}
+
+func warning(args ...interface{}) {
+	logger.SetPrefix("WARNING ")
+	logger.Println(args...)
+}
+
+/** 重定向错误页面 */
+func error_message(writer http.ResponseWriter, request *http.Request, msg string) {
+	url := []string{"/err?msg=", msg}
+	http.Redirect(writer, request, strings.Join(url, ""), 302)
+}
 
 /** 通过 Cookie 判断用户是否登录 */
 func session(writer http.ResponseWriter, request *http.Request) (sess models.Session, err error) {
