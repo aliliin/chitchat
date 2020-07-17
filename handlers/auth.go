@@ -7,8 +7,7 @@ import (
 
 /** 登录页面 */
 func Login(writer http.ResponseWriter, request *http.Request) {
-	t := parseTemplateFiles("auth.layout", "navbar", "login")
-	t.Execute(writer, nil)
+	generateHTML(writer, nil, "auth.layout", "navbar", "login")
 }
 
 /** 注册页面 */
@@ -61,7 +60,7 @@ func Authenticate(writer http.ResponseWriter, request *http.Request) {
 func Logout(writer http.ResponseWriter, request *http.Request) {
 	cookie, err := request.Cookie("_cookie")
 	if err != http.ErrNoCookie {
-		danger("Failed to get cookie")
+		warning("Failed to get cookie")
 		session := models.Session{Uuid: cookie.Value}
 		session.DeleteByUUID()
 	}

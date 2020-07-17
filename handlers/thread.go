@@ -42,6 +42,7 @@ func ReadThread(writer http.ResponseWriter, request *http.Request) {
 	vals := request.URL.Query()
 	uuid := vals.Get("id")
 	thread, err := models.ThreadByUUID(uuid)
+
 	if err != nil {
 		error_message(writer, request, "Cannot read thread")
 	} else {

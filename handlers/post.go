@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"github.com/aliliin/chitchat/models"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"net/http"
 )
 
@@ -14,21 +15,23 @@ func PostThread(writer http.ResponseWriter, request *http.Request) {
 	} else {
 		err = request.ParseForm()
 		if err != nil {
-			danger("Cannot parse form")
+			danger(err, "Cannot parse form")
 		}
 		user, err := sess.User()
 		if err != nil {
-			danger("Cannot get user from session")
+			danger(err, "Cannot get user from session")
 		}
 		body := request.PostFormValue("body")
 		uuid := request.PostFormValue("uuid")
 		thread, err := models.ThreadByUUID(uuid)
-
 		if err != nil {
-			error_message(writer, request, "cannot read thread")
+			msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "thread_not_found",
+			})
+			error_message(writer, request, msg)
 		}
 		if _, err := user.CreatePost(thread, body); err != nil {
-			danger("Cannot create post")
+			danger(err, "Cannot create post")
 		}
 		url := fmt.Sprint("/thread/read?id=", uuid)
 		http.Redirect(writer, request, url, 302)

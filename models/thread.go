@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type Thread struct {
 	Id        int
@@ -73,10 +75,10 @@ func ThreadByUUID(uuid string) (conv Thread, err error) {
 	return
 }
 
-/** 获取启动此线程的用户 */
+/** 获取创建此主题的用户 */
 func (thread *Thread) User() (user User) {
 	user = User{}
-	Db.QueryRow("select id,uuid,name,email,cretead_at from users where id = ?", thread.UserId).
+	Db.QueryRow("select id,uuid,name,email,created_at from users where id = ?", thread.UserId).
 		Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.CreatedAt)
 	return
 }

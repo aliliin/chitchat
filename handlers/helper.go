@@ -3,41 +3,32 @@ package handlers
 import (
 	"errors"
 	"fmt"
+	. "github.com/aliliin/chitchat/config"
 	"github.com/aliliin/chitchat/models"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 /** 全局辅助函数 */
 
 /** 初始化日志错误 */
 var logger *log.Logger
+var localizer *i18n.Localizer
 
 func init() {
-	file, err := os.OpenFile("logs/chitchat.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	// 获取本地化实例
+	// 获取本地化实例
+	localizer = i18n.NewLocalizer(ViperConfig.LocaleBundle, ViperConfig.App.Language)
+	file, err := os.OpenFile(ViperConfig.App.Log+"/chitchat.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalln("Failed to open log file", err)
 	}
 	logger = log.New(file, "INFO", log.Ldate|log.Ltime|log.Lshortfile)
-}
-
-/** 三种错误级别 */
-func info(args ...interface{}) {
-	logger.SetPrefix("INFO ")
-	logger.Println(args...)
-}
-
-func danger(args ...interface{}) {
-	logger.SetPrefix("ERROR ")
-	logger.Println(args...)
-}
-
-func warning(args ...interface{}) {
-	logger.SetPrefix("WARNING ")
-	logger.Println(args...)
 }
 
 /** 重定向错误页面 */
@@ -58,28 +49,41 @@ func session(writer http.ResponseWriter, request *http.Request) (sess models.Ses
 	return
 }
 
-/** 解析 HTML 模版（应对应需要传入的多个模版文件的情况，避免重复编写模版代码) */
-func parseTemplateFiles(filenames ...string) (t *template.Template) {
-	var files []string
-	t = template.New("layout")
-	for _, file := range filenames {
-		files = append(files, fmt.Sprintf("views/%s.html", file))
-	}
-	t = template.Must(t.ParseFiles(files...))
-	return
-}
-
 /** 生成响应的 HTML */
 func generateHTML(writer http.ResponseWriter, data interface{}, filenames ...string) {
 	var files []string
 	for _, file := range filenames {
-		files = append(files, fmt.Sprintf("views/%s.html", file))
+		files = append(files, fmt.Sprintf("views/%s/%s.html", ViperConfig.App.Language, file))
 	}
-	templates := template.Must(template.ParseFiles(files...))
+	funcMap := template.FuncMap{"fdate": formatDate}
+	t := template.New("layout").Funcs(funcMap)
+	templates := template.Must(t.ParseFiles(files...))
 	templates.ExecuteTemplate(writer, "layout", data)
 }
 
 /** 返回版本号 */
 func Version() string {
 	return "0.1"
+}
+
+/** 日期格式化辅助函数 */
+func formatDate(t time.Time) string {
+	datetime := "2006-01-02 15:04:05"
+	return t.Format(datetime)
+}
+
+/** 三种错误级别 */
+func info(args ...interface{}) {
+	logger.SetPrefix("INFO ")
+	logger.Println(args...)
+}
+
+func danger(args ...interface{}) {
+	logger.SetPrefix("ERROR ")
+	logger.Println(args...)
+}
+
+func warning(args ...interface{}) {
+	logger.SetPrefix("WARNING ")
+	logger.Println(args...)
 }

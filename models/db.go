@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 
+	. "github.com/aliliin/chitchat/config"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -16,7 +17,11 @@ var Db *sql.DB
 /*通过 init 方法在 Web 应用启动时自动初始化数据库连接*/
 func init() {
 	var err error
-	Db, err = sql.Open("mysql", "root:@/chitchat?charset=utf8&parseTime=true")
+	driver := ViperConfig.Db.Driver
+	source := fmt.Sprintf("%s:%s@(%s)/%s?charset=utf8&parseTime=true", ViperConfig.Db.User, ViperConfig.Db.Password,
+		ViperConfig.Db.Address, ViperConfig.Db.Database)
+
+	Db, err = sql.Open(driver, source)
 	if err != nil {
 		log.Fatal(err)
 	}

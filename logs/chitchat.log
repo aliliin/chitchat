@@ -1,1 +1,4 @@
 ERROR 2020/07/14 16:38:05 helper.go:35: Failed to get cookie
+ERROR 2020/07/14 17:27:26 helper.go:44: Failed to get cookie
+ERROR 2020/07/14 18:37:29 helper.go:45: Failed to get cookie
+ERROR 2020/07/14 18:42:39 helper.go:45: Failed to get cookie
